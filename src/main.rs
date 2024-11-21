@@ -1,7 +1,15 @@
 mod mandelbrot;
 mod window_manager;
 
+use mandelbrot::Mandelbrot;
+use window_manager::WindowManager;
+
 fn main() {
-    let mut manager = window_manager::WindowManager::new(800, 600);
+    const WIDTH: usize = 800;
+    const HEIGHT: usize = 600;
+    const MAX_ITERATIONS: usize = 100;
+
+    let mandelbrot = Mandelbrot::new(WIDTH, HEIGHT, MAX_ITERATIONS);
+    let mut manager = WindowManager::new(mandelbrot, WIDTH, HEIGHT);
     manager.run();
 }

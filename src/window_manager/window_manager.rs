@@ -1,7 +1,5 @@
-use crate::mandelbrot;
+use crate::mandelbrot::Mandelbrot;
 use minifb::{Key, Window, WindowOptions};
-
-const MAX_ITERATIONS: u32 = 50;
 
 #[derive(Clone, Copy)]
 struct Viewport {
@@ -32,12 +30,13 @@ impl Viewport {
 }
 
 pub struct WindowManager {
+    mandelbrot: Mandelbrot,
     viewport: Viewport,
     window: Window,
 }
 
 impl WindowManager {
-    pub fn new(width: usize, height: usize) -> Self {
+    pub fn new(mandelbrot: Mandelbrot, width: usize, height: usize) -> Self {
         let window = Window::new("Mandelbrot Set", width, height, WindowOptions::default())
             .expect("Failed to create window");
 
@@ -50,7 +49,11 @@ impl WindowManager {
             height,
         };
 
-        Self { window, viewport }
+        Self {
+            mandelbrot,
+            window,
+            viewport,
+        }
     }
 
     pub fn run(&mut self) {
@@ -71,14 +74,11 @@ impl WindowManager {
     }
 
     fn render_frame(&mut self) {
-        let grid = mandelbrot::calculations::compute(
-            self.viewport.width,
-            self.viewport.height,
+        let grid = self.mandelbrot.compute(
             self.viewport.x_min,
             self.viewport.x_max,
             self.viewport.y_min,
             self.viewport.y_max,
-            MAX_ITERATIONS,
         );
 
         let buffer = self.render(&grid);
@@ -88,7 +88,7 @@ impl WindowManager {
             .expect("Failed to update window");
     }
 
-    fn render(&mut self, grid: &[u8]) -> Vec<u32> {
+    fn render(&self, grid: &[u8]) -> Vec<u32> {
         let mut buffer = Vec::with_capacity(self.viewport.width * self.viewport.height);
 
         for &value in grid {

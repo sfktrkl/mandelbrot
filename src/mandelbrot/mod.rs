@@ -1,1 +1,2 @@
-pub mod calculations;
+pub mod mandelbrot;
+pub use mandelbrot::Mandelbrot;
