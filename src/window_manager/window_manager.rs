@@ -63,7 +63,7 @@ impl WindowManager {
                 .expect("Failed to update window");
 
             if let Some(scroll) = self.window.get_scroll_wheel() {
-                let factor: f32 = if scroll.1 > 0.0 { 0.9 } else { 1.1 };
+                let factor: f32 = if scroll.1 > 0.0 { 0.5 } else { 2.0 };
 
                 if let Some((mouse_x, mouse_y)) =
                     self.window.get_mouse_pos(minifb::MouseMode::Discard)
