@@ -18,9 +18,9 @@ rustc --version
 
 Rust package manager will automatically download the dependencies.
 
-- [image](https://crates.io/crates/image): Imaging library.
+- [minifb](https://crates.io/crates/minifb): Window setup.
   ```bash
-  cargo add image
+  cargo add minifb
   ```
 
 ### Build and Run the Program
