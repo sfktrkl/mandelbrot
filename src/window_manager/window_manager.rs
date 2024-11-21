@@ -58,7 +58,9 @@ impl WindowManager {
 
     pub fn run(&mut self) {
         while self.window.is_open() && !self.window.is_key_down(Key::Escape) {
-            self.render_frame();
+            self.window
+                .update_with_buffer(&self.render(), self.viewport.width, self.viewport.height)
+                .expect("Failed to update window");
 
             if let Some(scroll) = self.window.get_scroll_wheel() {
                 let factor: f32 = if scroll.1 > 0.0 { 0.9 } else { 1.1 };
@@ -73,7 +75,7 @@ impl WindowManager {
         }
     }
 
-    fn render_frame(&mut self) {
+    fn render(&self) -> Vec<u32> {
         let grid = self.mandelbrot.compute(
             self.viewport.x_min,
             self.viewport.x_max,
@@ -81,17 +83,9 @@ impl WindowManager {
             self.viewport.y_max,
         );
 
-        let buffer = self.render(&grid);
-
-        self.window
-            .update_with_buffer(&buffer, self.viewport.width, self.viewport.height)
-            .expect("Failed to update window");
-    }
-
-    fn render(&self, grid: &[u8]) -> Vec<u32> {
         let mut buffer = Vec::with_capacity(self.viewport.width * self.viewport.height);
 
-        for &value in grid {
+        for value in grid {
             let rgba = u32::from_be_bytes([0, value, value, value]);
             buffer.push(rgba);
         }
