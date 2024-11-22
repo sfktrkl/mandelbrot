@@ -22,6 +22,10 @@ Rust package manager will automatically download the dependencies.
   ```bash
   cargo add minifb
   ```
+- [rayon](https://crates.io/crates/rayon): Work-stealing parallelism.
+  ```bash
+  cargo add rayon
+  ```
 
 ### Build and Run the Program
 

@@ -1,3 +1,5 @@
+use rayon::prelude::*;
+
 pub struct Mandelbrot {
     width: usize,
     height: usize,
@@ -14,17 +16,18 @@ impl Mandelbrot {
     }
 
     pub fn compute(&self, x_min: f64, x_max: f64, y_min: f64, y_max: f64) -> Vec<(u8, u8, u8)> {
-        let mut grid = Vec::with_capacity(self.width * self.height);
-
-        for py in 0..self.height {
-            for px in 0..self.width {
-                let x = x_min + (px as f64 / self.width as f64) * (x_max - x_min);
+        (0..self.height)
+            .into_par_iter()
+            .flat_map(|py| {
                 let y = y_min + (py as f64 / self.height as f64) * (y_max - y_min);
-                grid.push(self.mandelbrot(x, y));
-            }
-        }
-
-        grid
+                (0..self.width)
+                    .map(|px| {
+                        let x = x_min + (px as f64 / self.width as f64) * (x_max - x_min);
+                        self.mandelbrot(x, y)
+                    })
+                    .collect::<Vec<(u8, u8, u8)>>()
+            })
+            .collect()
     }
 
     fn mandelbrot(&self, x: f64, y: f64) -> (u8, u8, u8) {
