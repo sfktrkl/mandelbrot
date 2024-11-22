@@ -86,7 +86,7 @@ impl WindowManager {
         let mut buffer = Vec::with_capacity(self.viewport.width * self.viewport.height);
 
         for value in grid {
-            let rgba = u32::from_be_bytes([0, value, value, value]);
+            let rgba = u32::from_be_bytes([0, value.0, value.1, value.2]);
             buffer.push(rgba);
         }
 

@@ -13,7 +13,7 @@ impl Mandelbrot {
         }
     }
 
-    pub fn compute(&self, x_min: f64, x_max: f64, y_min: f64, y_max: f64) -> Vec<u8> {
+    pub fn compute(&self, x_min: f64, x_max: f64, y_min: f64, y_max: f64) -> Vec<(u8, u8, u8)> {
         let mut grid = Vec::with_capacity(self.width * self.height);
 
         for py in 0..self.height {
@@ -27,7 +27,7 @@ impl Mandelbrot {
         grid
     }
 
-    fn mandelbrot(&self, x: f64, y: f64) -> u8 {
+    fn mandelbrot(&self, x: f64, y: f64) -> (u8, u8, u8) {
         let mut real = x;
         let mut imag = y;
         let mut iteration = 0;
@@ -40,6 +40,19 @@ impl Mandelbrot {
             iteration += 1;
         }
 
-        (iteration * 255 / self.max_iterations) as u8
+        if iteration == self.max_iterations {
+            return (0, 0, 0);
+        }
+        self.color_map(iteration)
+    }
+
+    fn color_map(&self, iteration: usize) -> (u8, u8, u8) {
+        let factor = iteration as f32 / self.max_iterations as f32;
+
+        let r = (factor * 255.0) as u8;
+        let g = (factor * 255.0) as u8;
+        let b = ((1.0 - factor) * 255.0) as u8;
+
+        (r, g, b)
     }
 }
