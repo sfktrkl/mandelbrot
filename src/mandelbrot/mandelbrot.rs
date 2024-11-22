@@ -16,14 +16,14 @@ impl Mandelbrot {
             palette: vec![
                 (0, 0, 50),      // Very dark blue
                 (0, 0, 100),     // Dark blue
-                (0, 50, 150),    // Deep blue
                 (0, 100, 200),   // Medium blue
                 (100, 150, 255), // Lighter blue
                 (200, 200, 255), // Very light blue
+                (255, 255, 255), // White
+                (255, 200, 125), // Very light orange
                 (255, 150, 100), // Light orange
                 (255, 100, 50),  // Orange
-                (255, 50, 0),    // Bright orange
-                (255, 255, 255), // White
+                (255, 50, 0),    // Dark orange
             ],
         }
     }
@@ -48,7 +48,7 @@ impl Mandelbrot {
         let mut imag = 0.0;
         let mut iteration = 0;
 
-        while real * real + imag * imag <= 4.0 && iteration < self.max_iterations {
+        while real * real + imag * imag <= 65536.0 && iteration < self.max_iterations {
             let temp_real = real * real - imag * imag + x0;
             imag = 2.0 * real * imag + y0;
             real = temp_real;
@@ -56,16 +56,20 @@ impl Mandelbrot {
             iteration += 1;
         }
 
-        self.color_map(iteration as f64)
+        // Use log-based escape time algorithm for smoother gradient
+        let mut i = iteration as f64;
+        if iteration < self.max_iterations {
+            let log_zn = (real * real + imag * imag).ln() / 2.0;
+            let nu = (log_zn / (2.0_f64).ln()).ln() / (2.0_f64).ln();
+            i = iteration as f64 + 1.0 - nu;
+        }
+
+        self.color_map(i)
     }
 
     fn color_map(&self, iteration: f64) -> (u8, u8, u8) {
         let idx = (iteration as usize) % self.palette.len();
-        let next_idx = if idx + 1 < self.palette.len() {
-            idx + 1
-        } else {
-            idx
-        };
+        let next_idx = (idx + 1) % self.palette.len();
 
         let c1 = self.palette[idx];
         let c2 = self.palette[next_idx];
