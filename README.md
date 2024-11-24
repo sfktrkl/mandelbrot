@@ -1,4 +1,6 @@
-# Mandelbrot Renderer
+# Mandelbrot Set Renderer
+
+![Mandelbrot Set](mandelbrot_set.png)
 
 ### Rust Installation
 
